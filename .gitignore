@@ -3,8 +3,10 @@
 # Python
  *.py[cod]
  
--# IntelliJ IDEA
--.idea
+# IntelliJ IDEA
+.idea
+.iml
+target/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
