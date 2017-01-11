@@ -1,5 +1,11 @@
 *.class
 
+# Python
+ *.py[cod]
+ 
+-# IntelliJ IDEA
+-.idea
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
