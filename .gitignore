@@ -1,11 +1,11 @@
 *.class
 
 # Python
- *.py[cod]
+*.py[cod]
  
 # IntelliJ IDEA
 .idea
-.iml
+*.iml
 target/
 
 # Mobile Tools for Java (J2ME)
