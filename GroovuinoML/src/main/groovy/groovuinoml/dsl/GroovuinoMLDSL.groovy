@@ -1,4 +1,4 @@
-package main.groovy.groovuinoml.dsl
+package groovuinoml.dsl
 
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
