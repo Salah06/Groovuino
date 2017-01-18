@@ -53,6 +53,16 @@ public class ToWiring extends Visitor<StringBuffer> {
 	}
 
 	@Override
+	public void visit(TransitionableNode abstractTransition) {
+
+	}
+
+	@Override
+	public void visit(ConditionalStatement conditionalStatement) {
+
+	}
+
+	@Override
 	public void visit(State state) {
 		w(String.format("void state_%s() {",state.getName()));
 		for(Action action: state.getActions()) {
@@ -64,7 +74,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w("}\n");
 
 	}
-
+	/*
 	@Override
 	public void visit(Transition transition) {
 		w(String.format("  if( digitalRead(%d) == %s && guard ) {",
@@ -74,7 +84,26 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w("  } else {");
 		w(String.format("    state_%s();",((State) context.get(CURRENT_STATE)).getName()));
 		w("  }");
+	}*/
+
+
+	public void visit(ConditionalTransition conditionalTransition) {
+		w(String.format("   if("));
+		conditionalTransition.getConditionalStatement().accept(this);
+		w(String.format(" guard) {"));
+		w("    time = millis();");
+		w(String.format("    state_%s();",conditionalTransition.getNext().getName()));
+		w("  } else {");
+
+		if(conditionalTransition.getNext() instanceof Macro) {
+			//	Macro macro = (Macro) conditionalTransition.getNext();
+			//	w(String.format("      %s", ((Macro) (conditionalTransition.getNext())).getBeginState().getName()));
+		}
+		w(String.format("    state_%s();", ((State) context.get(CURRENT_STATE)).getName()));
+		w("  }");
 	}
+
+
 
 	@Override
 	public void visit(Action action) {
