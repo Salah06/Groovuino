@@ -57,7 +57,17 @@ abstract class GroovuinoMLBasescript extends Script {
 			}]
 		}]
 	}
-	
+
+//	defineMacro "ld1Blink" from ld1on to ld1off
+	def defineMacro(String name) {
+		[from: { State beginState ->
+			[to: { State endState ->
+				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createMacro(name, beginState, endState)
+			}]
+		}]
+	}
+
+
 	// export name
 	def export(String name) {
 		println(((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().generateCode(name).toString())
