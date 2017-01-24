@@ -1,5 +1,8 @@
 package groovuinoml.dsl
 
+import io.github.mosser.arduinoml.kernel.behavioral.BooleanExpression
+import io.github.mosser.arduinoml.kernel.behavioral.TransitionableNode
+
 import java.util.List;
 
 import io.github.mosser.arduinoml.kernel.behavioral.Action
@@ -44,20 +47,32 @@ abstract class GroovuinoMLBasescript extends Script {
 	}
 	
 	// from state1 to state2 when sensor becomes signal
-	def from(state1) {
-		[to: { state2 -> 
-			[when: { sensor ->
-				[becomes: { signal -> 
-					((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createTransition(
-						state1 instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state1) : (State)state1, 
-						state2 instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state2) : (State)state2, 
-						sensor instanceof String ? (Sensor)((GroovuinoMLBinding)this.getBinding()).getVariable(sensor) : (Sensor)sensor, 
-						signal instanceof String ? (SIGNAL)((GroovuinoMLBinding)this.getBinding()).getVariable(signal) : (SIGNAL)signal)
-				}]
-			}]
-		}]
-	}
+	def from(TransitionableNode state1) {
+		List<Sensor> sensors = new ArrayList<>()
+		List<SIGNAL> signals = new ArrayList<>()
+		List<BooleanExpression> booleanExpressions = new ArrayList<>()
+		try {
+			def closure
+			[to: { state2 ->
+				[when: closure = { transitionBegin ->
+					if (transitionBegin instanceof Sensor) {
+						((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createConditionalTransition(state1, state2, booleanExpressions, sensors, signals)
 
+						[becomes: { signal, bool = BooleanExpression.AND ->
+							sensors.add(transitionBegin)
+							signals.add(signal)
+							booleanExpressions.add(bool)
+							[when: closure]
+						}]
+					}
+				}]
+
+			}]
+		}
+		catch (Exception exception) {
+			System.err.println(exception);
+		}
+	}
 //	defineMacro "ld1Blink" from ld1on to ld1off
 	def defineMacro(String name) {
 		[from: { State beginState ->
