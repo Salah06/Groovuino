@@ -4,9 +4,7 @@ import java.util.*;
 
 import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
-import io.github.mosser.arduinoml.kernel.behavioral.Action;
-import io.github.mosser.arduinoml.kernel.behavioral.State;
-import io.github.mosser.arduinoml.kernel.behavioral.Transition;
+import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
@@ -52,13 +50,30 @@ public class GroovuinoMLModel {
 		this.binding.setVariable(name, state);
 	}
 	
-	public void createTransition(State from, State to, Sensor sensor, SIGNAL value) {
-		Transition transition = new Transition();
-		transition.setNext(to);
-		transition.setSensor(sensor);
-		transition.setValue(value);
-		from.setTransition(transition);
-	}
+//	public void createConditianalTransition(State from, State to, List<Sensor> sensors, List<SIGNAL> values,List<BooleanExpression> booleanExpressions) {
+//		ConditionalStatement cndStmnt = new ConditionalStatement();
+//		cndStmnt.setBooleanExpressions(booleanExpressions);
+//		cndStmnt.setValue(values);
+//		cndStmnt.setSensor(sensors);
+//		ConditionalTransition conditionalTransition = new ConditionalTransition(cndStmnt);
+//		conditionalTransition.setNext(to);
+//		from.setTransition(conditionalTransition);
+//	}
+
+
+
+    public void createConditionalTransition(State from, State to, List<BooleanExpression> booleanExpressions, List<Sensor> sensors, List<SIGNAL> signals)  {
+
+        ConditionalStatement conditionalStatement = new ConditionalStatement();
+        conditionalStatement.setBooleanExpressions(booleanExpressions);
+        conditionalStatement.setSensor(sensors);
+        conditionalStatement.setValue(signals);
+
+        ConditionalTransition transition = new ConditionalTransition();
+        transition.setNext(to);
+        transition.setConditionalStatement(conditionalStatement);
+        from.setTransition(transition);
+    }
 	
 	public void setInitialState(State state) {
 		this.initialState = state;
