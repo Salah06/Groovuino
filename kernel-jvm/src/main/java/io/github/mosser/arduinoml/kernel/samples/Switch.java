@@ -40,7 +40,7 @@ public class Switch {
 		// Binding actions to states
 		on.setActions(Arrays.asList(switchTheLightOn));
 		off.setActions(Arrays.asList(switchTheLightOff));
-
+/*
 		// Creating transitions
 		Transition on2off = new Transition();
 		on2off.setNext(off);
@@ -69,6 +69,7 @@ public class Switch {
 
 		// Printing the generated code on the console
 		System.out.println(codeGenerator.getResult());
+		*/
 	}
 
 }

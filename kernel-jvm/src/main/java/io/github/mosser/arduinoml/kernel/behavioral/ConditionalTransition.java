@@ -30,4 +30,14 @@ public class ConditionalTransition extends Transition {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public Transition copy() {
+        ConditionalTransition copyConditionalTransition = new ConditionalTransition();
+        copyConditionalTransition.setNext(this.getNext());
+        copyConditionalTransition.setConditionalStatement(this.getConditionalStatement());
+
+        return copyConditionalTransition;
+
+    }
 }
