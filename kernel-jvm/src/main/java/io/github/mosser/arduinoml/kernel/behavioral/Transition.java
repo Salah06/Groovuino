@@ -15,4 +15,6 @@ public abstract class Transition implements Visitable {
 		this.next = next;
 	}
 
+	public abstract Transition copy();
+
 }

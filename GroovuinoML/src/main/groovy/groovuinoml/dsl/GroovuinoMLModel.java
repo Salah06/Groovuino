@@ -78,7 +78,28 @@ public class GroovuinoMLModel {
 	public void setInitialState(State state) {
 		this.initialState = state;
 	}
-	
+
+
+	private void generateStateList(TransitionableNode state, Macro macro) {
+		State myState = (State) state.copy();
+
+		String stateName = String.format("macro_%s_%s", macro.getName(), state.getName());
+		myState.setName(stateName);
+		if (state.getName().equals(macro.getEndState().getName())) {
+			myState.setTransition(macro.getTransition());
+			macro.getStateList().add(myState);
+		} else {
+			State next = (State) myState.getTransition().getNext().copy();
+
+			String nextStateName = String.format("macro_%s_%s", macro.getName(), state.getTransition().getNext().getName());
+			next.setName(nextStateName);
+			myState.getTransition().setNext(next);
+			macro.getStateList().add(myState);
+			generateStateList(state.getTransition().getNext(), macro);
+		}
+	}
+
+
 	@SuppressWarnings("rawtypes")
 	public Object generateCode(String appName) {
 		App app = new App();

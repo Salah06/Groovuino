@@ -7,7 +7,7 @@ import io.github.mosser.arduinoml.kernel.generator.Visitor;
 /**
  * Created by ytijani on 18/01/2017.
  */
-public class TransitionableNode implements NamedElement, Visitable {
+public abstract class TransitionableNode implements NamedElement, Visitable {
 
     private String name;
     private Transition transition;
@@ -36,6 +36,8 @@ public class TransitionableNode implements NamedElement, Visitable {
     public void setTransition(Transition transition) {
         this.transition = transition;
     }
+
+    abstract public  TransitionableNode copy();
 
     @Override
     public void accept(Visitor visitor) {

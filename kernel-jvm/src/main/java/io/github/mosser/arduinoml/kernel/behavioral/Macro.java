@@ -45,4 +45,10 @@ public class Macro extends TransitionableNode {
     public void setStateList(List<State> stateList) {
         this.stateList = stateList;
     }
+
+    @Override
+    public TransitionableNode copy() {
+        return null;
+    }
+
 }

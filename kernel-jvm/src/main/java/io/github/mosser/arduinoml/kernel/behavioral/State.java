@@ -22,4 +22,28 @@ public class State extends TransitionableNode {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
+
+	@Override
+	public TransitionableNode copy() {
+		State copy = new State();
+		copy.setName(this.getName());
+		List<Action> copyActions = new ArrayList<>();
+		for(Action original : this.getActions()) {
+			Action actionCopy = new Action();
+			actionCopy.setValue(original.getValue());
+			actionCopy.setActuator(original.getActuator());
+			copyActions.add(actionCopy);
+		}
+		copy.setActions(copyActions);
+
+		if(this.getTransition() != null) {
+			Transition copyTransition = this.getTransition().copy();
+			copy.setTransition(copyTransition);
+		}
+
+
+		return copy;
+
+	}
+
 }
