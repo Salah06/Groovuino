@@ -53,6 +53,12 @@ public class ToWiring extends Visitor<StringBuffer> {
 	}
 
 	@Override
+	public void visit(Macro macro) {
+		macro.getStateList().forEach(this::visit);
+
+	}
+
+	@Override
 	public void visit(TransitionableNode abstractTransition) {
 
 	}
@@ -64,16 +70,29 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(State state) {
-		w(String.format("void state_%s() {",state.getName()));
-		for(Action action: state.getActions()) {
-			action.accept(this);
+		if(state.getTransition() != null) {
+			w(String.format("void state_%s() {", state.getName()));
+			visitActionsTransitions(state.getTransition(), state);
+			w("}\n");
+		}
+	}
+
+	private void visitActionsTransitions(Transition transition, State state) {
+		//TODO : add condition for timer transition
+		for (Action action : state.getActions()) {
+			if ((action.getValue().equals(SIGNAL.HIGH))) {
+				int amount = 0;
+				w(String.format("	tone(%d,1200,%d);", action.getActuator().getPin(), amount * 100));
+			} else {
+				action.accept(this);
+			}
 		}
 		w("  boolean guard = millis() - time > debounce;");
 		context.put(CURRENT_STATE, state);
-		state.getTransition().accept(this);
-		w("}\n");
+		transition.accept(this);
 
 	}
+
 	/*
 	@Override
 	public void visit(Transition transition) {
