@@ -15,13 +15,14 @@ import io.github.mosser.arduinoml.kernel.structural.Sensor;
 public class GroovuinoMLModel {
 	private List<Brick> bricks;
 	private List<State> states;
+	private List<Macro> macros;
 	private State initialState;
 	
 	private Binding binding;
 	
 	public GroovuinoMLModel(Binding binding) {
-		this.bricks = new ArrayList<Brick>();
-		this.states = new ArrayList<State>();
+		this.bricks = new ArrayList<>();
+		this.states = new ArrayList<>();
 		this.binding = binding;
 	}
 	
@@ -74,6 +75,16 @@ public class GroovuinoMLModel {
         transition.setConditionalStatement(conditionalStatement);
         from.setTransition(transition);
     }
+
+
+	public void createMacro(String macroName, State beginState, State endState) {
+		Macro macro = new Macro();
+		macro.setBeginState(beginState);
+		macro.setEndState(endState);
+		macro.setName(macroName);
+		macros.add(macro);
+		this.binding.setVariable(macroName, macro);
+	}
 	
 	public void setInitialState(State state) {
 		this.initialState = state;
@@ -107,9 +118,16 @@ public class GroovuinoMLModel {
 		app.setBricks(this.bricks);
 		app.setStates(this.states);
 		app.setInitial(this.initialState);
+		for(Macro m : macros) {
+			generateStateList(m.getBeginState(),m);
+		}
+		app.setMacros(this.macros);
 		Visitor codeGenerator = new ToWiring();
 		app.accept(codeGenerator);
 		
 		return codeGenerator.getResult();
 	}
+
+
+
 }
