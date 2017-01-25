@@ -13,7 +13,7 @@ public class GroovuinoMLModel {
 	private List<Brick> bricks;
 	private List<State> states;
 	private List<Macro> macros;
-	private State initialState;
+	private TransitionableNode initialState;
 	
 	private Binding binding;
 	
@@ -89,7 +89,7 @@ public class GroovuinoMLModel {
 		this.binding.setVariable(macroName, macro);
 	}
 	
-	public void setInitialState(State state) {
+	public void setInitialState(TransitionableNode state) {
 		this.initialState = state;
 	}
 
