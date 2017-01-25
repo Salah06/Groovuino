@@ -136,18 +136,14 @@ public class GroovuinoMLModel {
 		try {
 			brick.setName(name);
 			brick.setPin(pinNumber);
-			for (Brick aBrick : this.bricks) {
-				if (aBrick.getPin() == pinNumber) {
-//					throw new OverloadedPinException("You overloaded pin "+ pinNumber +".\n" +
-//							"You can't put "+aBrick.getName()+" and " +name+ " on it !");
-				}
-			}
+
+
+			this.bricks.stream().filter(aBrick -> aBrick.getPin() == pinNumber).forEach(aBrick -> {
+				//TODO  edge cases
+			});
 			this.bricks.add(brick);
 			this.binding.setVariable(name, brick);
 		}
-//		catch (OutOfDigitalPinRange | OverloadedPinException exception) {
-//			System.err.println(exception);
-//		}
 
 		catch (Exception exception) {
 			System.err.println(exception);
