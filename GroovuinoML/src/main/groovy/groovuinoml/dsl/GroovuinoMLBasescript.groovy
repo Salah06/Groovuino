@@ -51,8 +51,8 @@ abstract class GroovuinoMLBasescript extends Script {
 	}
 	
 	// initial state
-	def initial(state) {
-		((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().setInitialState(state instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state) : (State)state)
+	def initial(TransitionableNode state) {
+		((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().setInitialState(state)
 	}
 	
 	// from state1 to state2 when sensor becomes signal
