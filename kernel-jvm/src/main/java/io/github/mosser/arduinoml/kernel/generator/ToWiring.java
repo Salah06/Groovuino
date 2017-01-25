@@ -80,12 +80,12 @@ public class ToWiring extends Visitor<StringBuffer> {
 	private void visitActionsTransitions(Transition transition, State state) {
 		//TODO : add condition for timer transition
 		for (Action action : state.getActions()) {
-			if ((action.getValue().equals(SIGNAL.HIGH))) {
-				int amount = 0;
-				w(String.format("	tone(%d,1200,%d);", action.getActuator().getPin(), amount * 100));
-			} else {
+//			if ((action.getValue().equals(SIGNAL.HIGH))) {
+//				int amount = 0;
+//				w(String.format("	tone(%d,1200,%d);", action.getActuator().getPin(), amount * 100));
+//			} else {
 				action.accept(this);
-			}
+//			}
 		}
 		w("  boolean guard = millis() - time > debounce;");
 		context.put(CURRENT_STATE, state);
