@@ -16,7 +16,7 @@ public class App implements NamedElement, Visitable {
 	private List<Brick> bricks = new ArrayList<>();
 	private List<State> states = new ArrayList<>();
 	private List<Macro> macros = new ArrayList<>();
-	private State initial;
+	private TransitionableNode initial;
 
 	@Override
 	public String getName() {
@@ -48,7 +48,7 @@ public class App implements NamedElement, Visitable {
 		return initial;
 	}
 
-	public void setInitial(State initial) {
+	public void setInitial(TransitionableNode initial) {
 		this.initial = initial;
 	}
 
