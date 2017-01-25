@@ -14,13 +14,22 @@ import io.github.mosser.arduinoml.kernel.structural.SIGNAL
 abstract class GroovuinoMLBasescript extends Script {
 	// sensor "name" pin n
 	def sensor(String name) {
-		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n) },
-		onPin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n)}]
+		println("######edededededeede#########"+name)
+		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n) }]
+//		onPin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n)}]
 	}
 	
 	// actuator "name" pin n
 	def actuator(String name) {
 		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createActuator(name, n) }]
+	}
+
+	// led "name" pin n
+	def led(String name) {
+		int a;
+		println("###############"+name)
+
+		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createLed(name, n) }]
 	}
 	
 	// state "name" means actuator becomes signal [and actuator becomes signal]*n

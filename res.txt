@@ -1,0 +1,40 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Groovuino
+[INFO] Java implementation of ArduinoML abstract syntax
+[INFO] GroovuinoML: ArduinoML DSL embeded in Groovy
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Groovuino 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- exec-maven-plugin:1.5.0:java (default-cli) @ Groovuino ---
+[WARNING] 
+java.lang.ClassNotFoundException: groovuinoml.main.GroovuinoML
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at org.codehaus.mojo.exec.ExecJavaMojo$1.run(ExecJavaMojo.java:281)
+	at java.lang.Thread.run(Thread.java:745)
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Groovuino .......................................... FAILURE [  0.875 s]
+[INFO] Java implementation of ArduinoML abstract syntax ... SKIPPED
+[INFO] GroovuinoML: ArduinoML DSL embeded in Groovy ....... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.593 s
+[INFO] Finished at: 2017-01-25T08:10:24+01:00
+[INFO] Final Memory: 8M/107M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.5.0:java (default-cli) on project Groovuino: An exception occured while executing the Java class. groovuinoml.main.GroovuinoML -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

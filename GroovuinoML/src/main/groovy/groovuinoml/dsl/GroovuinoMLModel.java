@@ -7,10 +7,7 @@ import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
-import io.github.mosser.arduinoml.kernel.structural.Actuator;
-import io.github.mosser.arduinoml.kernel.structural.Brick;
-import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
-import io.github.mosser.arduinoml.kernel.structural.Sensor;
+import io.github.mosser.arduinoml.kernel.structural.*;
 
 public class GroovuinoMLModel {
 	private List<Brick> bricks;
@@ -23,6 +20,7 @@ public class GroovuinoMLModel {
 	public GroovuinoMLModel(Binding binding) {
 		this.bricks = new ArrayList<>();
 		this.states = new ArrayList<>();
+		this.macros = new ArrayList<>();
 		this.binding = binding;
 	}
 	
@@ -41,6 +39,11 @@ public class GroovuinoMLModel {
 		actuator.setPin(pinNumber);
 		this.bricks.add(actuator);
 		this.binding.setVariable(name, actuator);
+	}
+
+	public void createLed(String name, Integer pinNumber) {
+		Led led = new Led();
+		createBrick(led, name, pinNumber);
 	}
 	
 	public void createState(String name, List<Action> actions) {
@@ -126,6 +129,30 @@ public class GroovuinoMLModel {
 		app.accept(codeGenerator);
 		
 		return codeGenerator.getResult();
+	}
+
+
+	private void createBrick(Brick brick,String name,Integer pinNumber) {
+		try {
+			brick.setName(name);
+			brick.setPin(pinNumber);
+			for (Brick aBrick : this.bricks) {
+				if (aBrick.getPin() == pinNumber) {
+//					throw new OverloadedPinException("You overloaded pin "+ pinNumber +".\n" +
+//							"You can't put "+aBrick.getName()+" and " +name+ " on it !");
+				}
+			}
+			this.bricks.add(brick);
+			this.binding.setVariable(name, brick);
+		}
+//		catch (OutOfDigitalPinRange | OverloadedPinException exception) {
+//			System.err.println(exception);
+//		}
+
+		catch (Exception exception) {
+			System.err.println(exception);
+		}
+
 	}
 
 

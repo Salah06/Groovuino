@@ -1,0 +1,60 @@
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Building GroovuinoML: ArduinoML DSL embeded in Groovy 1.0
+[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] --- exec-maven-plugin:1.5.0:java (default-cli) @ GroovuinoML ---
+[WARNING]
+java.lang.reflect.InvocationTargetException
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.codehaus.mojo.exec.ExecJavaMojo$1.run(ExecJavaMojo.java:294)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:
+C:\Users\hraf\Desktop\Groovuino\GroovuinoML\scripts\Macro.groovy: 1: unable to resolve class main.groovy.groovuinoml.dsl.GroovuinoMLBasescript
+ @ line 1, column 1.
+   sensor "bt" pin 9
+   ^
+
+1 error
+
+	at org.codehaus.groovy.control.ErrorCollector.failIfErrors(ErrorCollector.java:309)
+	at org.codehaus.groovy.control.CompilationUnit.applyToSourceUnits(CompilationUnit.java:938)
+	at org.codehaus.groovy.control.CompilationUnit.doPhaseOperation(CompilationUnit.java:585)
+	at org.codehaus.groovy.control.CompilationUnit.compile(CompilationUnit.java:534)
+	at groovy.lang.GroovyClassLoader.doParseClass(GroovyClassLoader.java:286)
+	at groovy.lang.GroovyClassLoader.parseClass(GroovyClassLoader.java:259)
+	at groovy.lang.GroovyShell.parseClass(GroovyShell.java:674)
+	at groovy.lang.GroovyShell.parse(GroovyShell.java:686)
+	at groovy.lang.GroovyShell.parse(GroovyShell.java:695)
+	at groovy.lang.GroovyShell$parse.call(Unknown Source)
+	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:45)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:108)
+	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:116)
+	at groovuinoml.dsl.GroovuinoMLDSL.eval(GroovuinoMLDSL.groovy:58)
+	at groovuinoml.main.GroovuinoML.main(GroovuinoML.java:19)
+	... 6 more
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 2.563 s
+[INFO] Finished at: 2017-01-24T19:37:12+01:00
+[INFO] Final Memory: 13M/132M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.codehaus.mojo:exec-maven-plugin:1.5.0:java (default-cli) on project GroovuinoML: An exception occured while executing the Java class. null: InvocationTargetException: startup failed:
+[ERROR] C:\Users\hraf\Desktop\Groovuino\GroovuinoML\scripts\Macro.groovy: 1: unable to resolve class main.groovy.groovuinoml.dsl.GroovuinoMLBasescript
+[ERROR] @ line 1, column 1.
+[ERROR] sensor "bt" pin 9
+[ERROR] ^
+[ERROR]
+[ERROR] 1 error
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
