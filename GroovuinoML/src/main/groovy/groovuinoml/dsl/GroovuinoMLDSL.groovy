@@ -1,5 +1,7 @@
 package groovuinoml.dsl
 
+import io.github.mosser.arduinoml.kernel.behavioral.Duration
+import io.github.mosser.arduinoml.kernel.behavioral.Unit
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
@@ -19,6 +21,16 @@ class GroovuinoMLDSL {
 		
 		binding.setVariable("high", SIGNAL.HIGH)
 		binding.setVariable("low", SIGNAL.LOW)
+		Number.metaClass.getH = { ->
+			new Duration(delegate, Unit.hour)
+		}
+		Number.metaClass.getM = { ->
+			new Duration(delegate, Unit.minut)
+		}
+		Number.metaClass.getS = { ->
+			new Duration(delegate, Unit.second)
+		}
+
 	}
 	
 	private static CompilerConfiguration getDSLConfiguration() {
@@ -60,6 +72,15 @@ class GroovuinoMLDSL {
 		binding.setScript(script)
 		script.setBinding(binding)
 		
+		script.run()
+	}
+
+	void generateModel(File file) {
+		Script script = shell.parse(file)
+
+		binding.setScript(script)
+		script.setBinding(binding)
+
 		script.run()
 	}
 }

@@ -39,8 +39,5 @@ public abstract class TransitionableNode implements NamedElement, Visitable {
 
     abstract public  TransitionableNode copy();
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+
 }

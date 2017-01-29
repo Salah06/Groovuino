@@ -1,5 +1,6 @@
 package groovuinoml.dsl;
 
+import java.io.File;
 import java.util.*;
 
 import groovy.lang.Binding;
@@ -14,14 +15,15 @@ public class GroovuinoMLModel {
 	private List<State> states;
 	private List<Macro> macros;
 	private TransitionableNode initialState;
-	
 	private Binding binding;
+	private App importApp;
 	
 	public GroovuinoMLModel(Binding binding) {
 		this.bricks = new ArrayList<>();
 		this.states = new ArrayList<>();
 		this.macros = new ArrayList<>();
 		this.binding = binding;
+		this.importApp = new App();
 	}
 	
 	public void createSensor(String name, Integer pinNumber) {
@@ -80,6 +82,19 @@ public class GroovuinoMLModel {
     }
 
 
+    public void createDurationTransition (TransitionableNode from, TransitionableNode to, Duration duration) {
+		if (from.getTransition() != null) {
+		//	throw new TooManyTransitionsException("You can't set two outgoing transitions for one state !" +
+		//			"\n (from "+ from.getName()+" to " +from.getTransition().getNext().getName()+" and to "+to.getName()+"). \n" );
+		}
+		DurationTransition timerTransition = new DurationTransition();
+		timerTransition.setNext(to);
+		timerTransition.setDuration(duration);
+		from.setTransition(timerTransition);
+
+	}
+
+
 	public void createMacro(String macroName, State beginState, State endState) {
 		Macro macro = new Macro();
 		macro.setBeginState(beginState);
@@ -121,6 +136,7 @@ public class GroovuinoMLModel {
 		app.setBricks(this.bricks);
 		app.setStates(this.states);
 		app.setInitial(this.initialState);
+		System.out.println(app.getInitial().getName());
 		for(Macro m : macros) {
 			generateStateList(m.getBeginState(),m);
 		}
@@ -131,6 +147,10 @@ public class GroovuinoMLModel {
 		return codeGenerator.getResult();
 	}
 
+	public void createBuzzer(String name, Integer pinNumber) {
+		Buzzer buzzer = new Buzzer();
+		createBrick(buzzer, name, pinNumber);
+	}
 
 	private void createBrick(Brick brick,String name,Integer pinNumber) {
 		try {
@@ -151,6 +171,11 @@ public class GroovuinoMLModel {
 
 	}
 
+
+	public void importSketch (String path) {
+		GroovuinoMLDSL dsl = new GroovuinoMLDSL();
+		dsl.generateModel(new File(path));
+	}
 
 
 }

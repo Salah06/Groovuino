@@ -72,13 +72,21 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	}
 
-	@Override
-	public void visit(TransitionableNode abstractTransition) {
-
-	}
 
 	@Override
 	public void visit(ConditionalStatement conditionalStatement) {
+		int i;
+		for(i = 0; i < conditionalStatement.getSensor().size()-1; i++) {
+			//If the value of the sensor we talk about
+			//equals the value we want
+			w(String.format("digitalRead(%d) == %s %s",
+					conditionalStatement.getSensor().get(i).getPin(),conditionalStatement.getValue().get(i),
+					conditionalStatement.getBooleanExpressions().get(i).getExpression()));
+
+		}
+
+		w(String.format("digitalRead(%d) == %s &&",
+				conditionalStatement.getSensor().get(i).getPin(),conditionalStatement.getValue().get(i)));
 
 	}
 
@@ -86,6 +94,8 @@ public class ToWiring extends Visitor<StringBuffer> {
 	public void visit(State state) {
 		if(state.getTransition() != null) {
 			w(String.format("void state_%s() {", state.getName()));
+			System.out.println(state.getName());
+			System.out.println(state.getActions());
 			visitActionsTransitions(state.getTransition(), state);
 			w("}\n");
 		}
@@ -94,12 +104,13 @@ public class ToWiring extends Visitor<StringBuffer> {
 	private void visitActionsTransitions(Transition transition, State state) {
 		//TODO : add condition for timer transition
 		for (Action action : state.getActions()) {
-//			if ((action.getValue().equals(SIGNAL.HIGH))) {
-//				int amount = 0;
-//				w(String.format("	tone(%d,1200,%d);", action.getActuator().getPin(), amount * 100));
-//			} else {
+			if ((state.getTransition() instanceof DurationTransition) && (action.getActuator() instanceof Buzzer) &&
+					(action.getValue().equals(SIGNAL.HIGH))) {
+				int amount = ((DurationTransition) state.getTransition()).getDuration().getAmount();
+				w(String.format("	tone(%d,1200,%d);", action.getActuator().getPin(), amount * 100));
+			} else {
 				action.accept(this);
-//			}
+			}
 		}
 		w("  boolean guard = millis() - time > debounce;");
 		context.put(CURRENT_STATE, state);
@@ -136,6 +147,15 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w("  }");
 	}
 
+	@Override
+	public void visit(DurationTransition timerTransition) {
+		w(String.format("delay(%d);", timerTransition.getDuration().getAmount() * 100));
+		if(timerTransition.getNext() instanceof Macro) {
+			w(String.format("  state_%s();", ((Macro)timerTransition.getNext()).getStateList().get(0).getName()));
+		} else {
+			w(String.format("    state_%s();",timerTransition.getNext().getName()));
+		}
+	}
 
 
 	@Override

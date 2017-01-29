@@ -1,15 +1,9 @@
 package groovuinoml.dsl
 
-import io.github.mosser.arduinoml.kernel.behavioral.BooleanExpression
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionableNode
-
-import java.util.List;
-
-import io.github.mosser.arduinoml.kernel.behavioral.Action
-import io.github.mosser.arduinoml.kernel.behavioral.State
+import io.github.mosser.arduinoml.kernel.behavioral.*
 import io.github.mosser.arduinoml.kernel.structural.Actuator
-import io.github.mosser.arduinoml.kernel.structural.Sensor
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
+import io.github.mosser.arduinoml.kernel.structural.Sensor
 
 abstract class GroovuinoMLBasescript extends Script {
 	// sensor "name" pin n
@@ -73,6 +67,8 @@ abstract class GroovuinoMLBasescript extends Script {
 							booleanExpressions.add(bool)
 							[when: closure]
 						}]
+					} else if(transitionBegin instanceof Duration) {
+						((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createDurationTransition(state1, state2, transitionBegin)
 					}
 				}]
 
@@ -82,6 +78,11 @@ abstract class GroovuinoMLBasescript extends Script {
 			System.err.println(exception);
 		}
 	}
+
+	def buzzer(String name) {
+		[pin: { n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createBuzzer(name, n) }]
+	}
+
 //	defineMacro "ld1Blink" from ld1on to ld1off
 	def defineMacro(String name) {
 		[from: { State beginState ->
@@ -90,7 +91,9 @@ abstract class GroovuinoMLBasescript extends Script {
 			}]
 		}]
 	}
-
+	def importSketch(String path) {
+		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().importSketch(path)
+	}
 
 	// export name
 	def export(String name) {
