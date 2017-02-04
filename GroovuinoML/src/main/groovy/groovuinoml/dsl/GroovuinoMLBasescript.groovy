@@ -10,7 +10,6 @@ import io.github.mosser.arduinoml.kernel.structural.Sensor
 abstract class GroovuinoMLBasescript extends Script {
 	// sensor "name" pin n
 	def sensor(String name) {
-		println("###############"+name)
 		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n) }]
 //		onPin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSensor(name, n)}]
 	}
@@ -23,7 +22,6 @@ abstract class GroovuinoMLBasescript extends Script {
 	// led "name" pin n
 	def led(String name) {
 		int a;
-		println("###############"+name)
 
 		[pin: { n -> ((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createLed(name, n) }]
 	}
@@ -85,14 +83,7 @@ abstract class GroovuinoMLBasescript extends Script {
 		[pin: { n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createBuzzer(name, n) }]
 	}
 
-//	defineMacro "ld1Blink" from ld1on to ld1off
-	def defineMacro(String name) {
-		[from: { State beginState ->
-			[to: { State endState ->
-				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createMacro(name, beginState, endState)
-			}]
-		}]
-	}
+
 	def importSketch(String path) {
 		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().importSketch(path)
 	}
@@ -106,10 +97,30 @@ abstract class GroovuinoMLBasescript extends Script {
 		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().addAppToConstrain(appName);
 	}
 
-	def constrainTo(Function fun, Integer nb, NamedActuator actuator) {
-		String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
-			Actuator ac = Class.forName(className).newInstance()
-			((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(nb,fun,ac);
+//	def constrainTo(Function fun, Integer nb, NamedActuator actuator) {
+//		String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
+//			Actuator ac = Class.forName(className).newInstance()
+//			((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(nb,fun,ac);
+//	}
+
+	//	defineMacro "ld1Blink" from ld1on to ld1off
+	def defineMacro(String name) {
+		[from: { State beginState ->
+			[to: { State endState ->
+				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createMacro(name, beginState, endState)
+			}]
+		}]
+	}
+
+//	constraint led to max nana 33
+	def constraint(NamedActuator actuator) {
+		[to: { Function fun ->
+			[with: { int howMany ->
+				String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
+				Actuator ac = Class.forName(className).newInstance()
+				ac.setName(actuator.getName())
+				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(howMany,fun,ac);}]
+		}]
 	}
 
 	def compose() {

@@ -23,8 +23,14 @@ class GroovuinoMLDSL {
 		
 		binding.setVariable("high", SIGNAL.HIGH)
 		binding.setVariable("low", SIGNAL.LOW)
+		binding.setVariable(Function.MIN.toString(),Function.MIN);
+
 		binding.setVariable(Function.MAX.toString(),Function.MAX);
 		binding.setVariable("led",NamedActuator.LED);
+		binding.setVariable("buzzer",NamedActuator.BUZZER);
+		binding.setVariable("sensor",NamedActuator.Sensor);
+
+
 		Number.metaClass.getH = { ->
 			new Duration(delegate, Unit.hour)
 		}
