@@ -3,8 +3,10 @@ package groovuinoml.dsl;
 import java.io.File;
 import java.util.*;
 
+import groovuinoml.dsl.mapping.SketchMapping;
 import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
+import io.github.mosser.arduinoml.kernel.Exception.ConstraintViolation;
 import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
@@ -14,6 +16,7 @@ public class GroovuinoMLModel {
 	private List<Brick> bricks;
 	private List<State> states;
 	private List<Macro> macros;
+	private List<Constrain> constrains;
 	private TransitionableNode initialState;
 	private Binding binding;
 	private App importApp;
@@ -22,6 +25,7 @@ public class GroovuinoMLModel {
 		this.bricks = new ArrayList<>();
 		this.states = new ArrayList<>();
 		this.macros = new ArrayList<>();
+		this.constrains = new ArrayList<>();
 		this.binding = binding;
 		this.importApp = new App();
 	}
@@ -112,7 +116,7 @@ public class GroovuinoMLModel {
 	private void generateStateList(TransitionableNode state, Macro macro) {
 		State myState = (State) state.copy();
 
-		String stateName = String.format("macro_%s_%s", macro.getName(), state.getName());
+		String stateName = String.format("%s", state.getName());
 		myState.setName(stateName);
 		if (state.getName().equals(macro.getEndState().getName())) {
 			myState.setTransition(macro.getTransition());
@@ -120,7 +124,7 @@ public class GroovuinoMLModel {
 		} else {
 			State next = (State) myState.getTransition().getNext().copy();
 
-			String nextStateName = String.format("macro_%s_%s", macro.getName(), state.getTransition().getNext().getName());
+			String nextStateName = String.format("%s", state.getTransition().getNext().getName());
 			next.setName(nextStateName);
 			myState.getTransition().setNext(next);
 			macro.getStateList().add(myState);
@@ -130,7 +134,11 @@ public class GroovuinoMLModel {
 
 
 	@SuppressWarnings("rawtypes")
-	public Object generateCode(String appName) {
+	public Object generateCode(String appName) throws Exception {
+
+		if(isViolatedConstrain()) {
+			throw new ConstraintViolation("constrain is violated ");
+		}
 		App app = new App();
 		app.setName(appName);
 		app.setBricks(this.bricks);
@@ -145,6 +153,37 @@ public class GroovuinoMLModel {
 		app.accept(codeGenerator);
 		
 		return codeGenerator.getResult();
+	}
+
+	private boolean isViolatedConstrain()  {
+		for(Constrain constrain : constrains) {
+			if(constrain.getActuator() instanceof Led) {
+				if(constrain.getFunction().equals(Function.MAX)) {
+					if(countActuator(constrain.getActuator()) > constrain.getAmount()) {
+						return true;
+					}
+				}
+
+			} else if (constrain.getActuator() instanceof Buzzer) {
+
+			}
+		}
+		return true;
+	}
+
+
+	private int countActuator(Actuator actuator) {
+		int count = 0;
+
+	     return (int) bricks.stream()
+				            .filter(brick -> brick.getClass().isInstance(actuator))
+				 		    .count();
+	}
+
+	public static void main(String[] args) {
+		Brick b = new Led();
+		Brick c =  new Buzzer();
+		System.out.println(b.getClass().isInstance(c));
 	}
 
 	public void createBuzzer(String name, Integer pinNumber) {
@@ -168,6 +207,23 @@ public class GroovuinoMLModel {
 		catch (Exception exception) {
 			System.err.println(exception);
 		}
+
+	}
+
+	public void constrain(Integer nb, Function unaryFunc, Actuator actuator) {
+		Constrain constrain = new Constrain(nb,unaryFunc,actuator);
+		constrains.add(constrain);
+
+	}
+
+	public void addAppToConstrain(String appName) {
+		importApp.setName(appName);
+		importApp.setBricks(this.bricks);
+		importApp.setStates(this.states);
+		importApp.setInitial(this.initialState);
+
+		SketchMapping.getBinding().setVariable(importApp.getName(), importApp);
+		SketchMapping.getSketchConstrains().put(importApp.getName(), importApp);
 
 	}
 

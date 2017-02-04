@@ -1,7 +1,9 @@
 package groovuinoml.dsl
 
 import io.github.mosser.arduinoml.kernel.behavioral.Duration
+import io.github.mosser.arduinoml.kernel.behavioral.Function
 import io.github.mosser.arduinoml.kernel.behavioral.Unit
+import io.github.mosser.arduinoml.kernel.structural.NamedActuator
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.codehaus.groovy.control.customizers.SecureASTCustomizer
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
@@ -21,6 +23,8 @@ class GroovuinoMLDSL {
 		
 		binding.setVariable("high", SIGNAL.HIGH)
 		binding.setVariable("low", SIGNAL.LOW)
+		binding.setVariable(Function.MAX.toString(),Function.MAX);
+		binding.setVariable("led",NamedActuator.LED);
 		Number.metaClass.getH = { ->
 			new Duration(delegate, Unit.hour)
 		}

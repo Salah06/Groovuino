@@ -1,7 +1,9 @@
 package groovuinoml.dsl
 
+import io.github.mosser.arduinoml.kernel.App
 import io.github.mosser.arduinoml.kernel.behavioral.*
 import io.github.mosser.arduinoml.kernel.structural.Actuator
+import io.github.mosser.arduinoml.kernel.structural.NamedActuator
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
 import io.github.mosser.arduinoml.kernel.structural.Sensor
 
@@ -98,6 +100,16 @@ abstract class GroovuinoMLBasescript extends Script {
 	// export name
 	def export(String name) {
 		println(((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().generateCode(name).toString())
+	}
+
+	def exportToConstrain(String appName) {
+		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().addAppToConstrain(appName);
+	}
+
+	def constrainTo(Function fun, Integer nb, NamedActuator actuator) {
+		String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
+			Actuator ac = Class.forName(className).newInstance()
+			((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(nb,fun,ac);
 	}
 	
 	// disable run method while running

@@ -1,6 +1,7 @@
-importSketch "Macro.groovy"
+constrainTo max 1 led
 
-constraint Macro to max 2 led
-constraint Macro to min 1 pin
+sensor "bt" pin 9
+led "ld1" pin 12
+led "ld2" pin 11
 
 export "Ergonomic"

@@ -21,8 +21,7 @@ from ld2off to ld2on when bt becomes high
 defineMacro "ld1Blink" from ld1on to ld1off
 defineMacro "ld2Blink" from ld2on to ld2off
 
-from ld1Blink to ld2Blink when 3.s
-from ld2Blink to off when 3.s
+
 
 from off to ld1Blink when 3.s
 

@@ -1,5 +1,6 @@
 package io.github.mosser.arduinoml.kernel;
 
+import io.github.mosser.arduinoml.kernel.behavioral.Constrain;
 import io.github.mosser.arduinoml.kernel.behavioral.Macro;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.TransitionableNode;
