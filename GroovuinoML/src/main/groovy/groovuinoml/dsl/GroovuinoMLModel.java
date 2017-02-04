@@ -18,6 +18,9 @@ public class GroovuinoMLModel {
 	private List<Macro> macros;
 	private List<Constrain> constrains;
 	private TransitionableNode initialState;
+	private CompositionType compositionType;
+	private List<App[]> apps;
+	private List<String[]> stateNames;
 	private Binding binding;
 	private App importApp;
 	
@@ -233,5 +236,15 @@ public class GroovuinoMLModel {
 		dsl.generateModel(new File(path));
 	}
 
+
+
+	public void createComposition(CompositionType compositionType) {
+			this.compositionType = compositionType;
+	}
+
+	public void createSketchComposition(App[] myApps, String[] myStatesNames) {
+		this.apps.add(myApps);
+		this.stateNames.add(myStatesNames);
+	}
 
 }

@@ -111,7 +111,26 @@ abstract class GroovuinoMLBasescript extends Script {
 			Actuator ac = Class.forName(className).newInstance()
 			((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(nb,fun,ac);
 	}
-	
+
+	def compose() {
+		def closure
+		[sketches: { ... appList ->
+			[usingStrategy: closure = { CompositionType compositionType ->
+				if (compositionType.equals(CompositionType.MANUAL)) {
+					[mergingState: { ... stateList ->
+						((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createComposition(compositionType)
+						((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSketchComposition((App[]) appList,(String[]) stateList)
+						[and: closure]
+					}]
+				}
+			}]
+		}]
+
+	}
+
+
+
+
 	// disable run method while running
 	int count = 0
 	abstract void scriptBody()
