@@ -42,4 +42,13 @@ public class Constrain {
     public void setFunction(Function function) {
         this.function = function;
     }
+
+    @Override
+
+    public String toString() {
+        return "constraint " + actuator.getName()+ " to " + getFunction().toString() + " with " + getAmount();
+    }
+
+//    constraint led to max nana 2
+
 }

@@ -5,7 +5,9 @@ package io.github.mosser.arduinoml.kernel.structural;
  */
 public enum NamedActuator {
 
-    LED("led");
+    LED("led"),
+    BUZZER("buzzer"),
+    Sensor("sensor");
 
     private String name;
 

@@ -136,9 +136,10 @@ public class GroovuinoMLModel {
 	@SuppressWarnings("rawtypes")
 	public Object generateCode(String appName) throws Exception {
 
-		if(isViolatedConstrain()) {
-			throw new ConstraintViolation("constrain is violated ");
-		}
+//		if(isViolatedConstrain()) {
+//			throw new ConstraintViolation("constrain is violated ");
+//		}
+		verifyConstraintViolation();
 		App app = new App();
 		app.setName(appName);
 		app.setBricks(this.bricks);
@@ -155,29 +156,32 @@ public class GroovuinoMLModel {
 		return codeGenerator.getResult();
 	}
 
-	private boolean isViolatedConstrain()  {
+	private void verifyConstraintViolation() throws ConstraintViolation {
 		for(Constrain constrain : constrains) {
-			if(constrain.getActuator() instanceof Led) {
-				if(constrain.getFunction().equals(Function.MAX)) {
-					if(countActuator(constrain.getActuator()) > constrain.getAmount()) {
-						return true;
+			int count = countActuator(constrain.getActuator());
+			if(constrain.getFunction().equals(Function.MAX)) {
+					if(count > constrain.getAmount()) {
+						throw new ConstraintViolation("[Constraint : "+ constrain.toString()+" ]" + " found : " + count );
+
 					}
-				}
-
-			} else if (constrain.getActuator() instanceof Buzzer) {
-
+			}else if(constrain.getFunction().equals(Function.MIN)){
+				if(count < constrain.getAmount()) {
+					throw new ConstraintViolation("[Constraint : "+ constrain.toString()+" ]" + " found : " + count );
 			}
+
 		}
-		return true;
+		}
 	}
 
 
-	private int countActuator(Actuator actuator) {
-		int count = 0;
 
-	     return (int) bricks.stream()
+	private int countActuator(Actuator actuator) {
+		int count ;
+
+	     count =  (int) bricks.stream()
 				            .filter(brick -> brick.getClass().isInstance(actuator))
 				 		    .count();
+		return count;
 	}
 
 	public static void main(String[] args) {
