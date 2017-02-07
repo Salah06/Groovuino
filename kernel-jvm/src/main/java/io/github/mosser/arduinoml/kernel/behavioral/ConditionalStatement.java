@@ -16,6 +16,14 @@ public class ConditionalStatement implements Visitable {
     private List<SIGNAL> value;
     private List <BooleanExpression> booleanExpressions;
 
+    public ConditionalStatement() {
+    }
+
+    public ConditionalStatement(List<Sensor> sensor, List<SIGNAL> value, List<BooleanExpression> booleanExpressions) {
+        this.sensor = sensor;
+        this.value = value;
+        this.booleanExpressions = booleanExpressions;
+    }
 
     public List<Sensor> getSensor() {
         return sensor;

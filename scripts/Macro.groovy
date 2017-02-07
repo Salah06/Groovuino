@@ -10,20 +10,13 @@ state "ld2off" means ld2 becomes low
 
 state "off" means ld1 becomes low and ld2 becomes low
 
-from ld1on to ld1off when bt becomes high
-from ld1off to ld1on when bt becomes high
 
 
-from ld2on to ld2off when bt becomes high
-from ld2off to ld2on when bt becomes high
+defineMacro "blink" using "state1" to "state2" when bt becomes high and "state2" to "state1" when bt becomes low
 
+applyMacro blink using ld1on and ld1off
 
-defineMacro "ld1Blink" from ld1on to ld1off
-defineMacro "ld2Blink" from ld2on to ld2off
-
-
-
-from off to ld1Blink when 3.s
+from off to ld1on when 3.s
 
 initial off
 

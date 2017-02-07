@@ -55,7 +55,12 @@ public class Macro extends TransitionableNode {
 
     @Override
     public TransitionableNode copy() {
-        return null;
+        Macro m = new Macro();
+        m.setStateList(new ArrayList<>());
+        for(State s : stateList) {
+            m.getStateList().add((State)s.copy());
+        }
+        return m;
     }
 
 }
