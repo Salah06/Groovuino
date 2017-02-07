@@ -5,7 +5,7 @@ package io.github.mosser.arduinoml.kernel.behavioral;
  */
 public enum  CompositionType {
 
-    MANUAL("manually"), PARALLEL("state"), SEQUENTIAL("transition");
+    MANUAL("manual"), PARALLEL("parallel"), SEQUENTIAL("sequential");
 
     private String name;
 

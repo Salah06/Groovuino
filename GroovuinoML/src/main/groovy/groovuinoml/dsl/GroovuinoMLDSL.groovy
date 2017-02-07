@@ -1,5 +1,7 @@
 package groovuinoml.dsl
 
+import groovuinoml.dsl.mapping.SketchMapping
+import io.github.mosser.arduinoml.kernel.behavioral.CompositionType
 import io.github.mosser.arduinoml.kernel.behavioral.Duration
 import io.github.mosser.arduinoml.kernel.behavioral.Function
 import io.github.mosser.arduinoml.kernel.behavioral.Unit
@@ -29,7 +31,9 @@ class GroovuinoMLDSL {
 		binding.setVariable("led",NamedActuator.LED);
 		binding.setVariable("buzzer",NamedActuator.BUZZER);
 		binding.setVariable("sensor",NamedActuator.Sensor);
-
+		binding.setVariable(CompositionType.MANUAL.toString(),CompositionType.MANUAL);
+		binding.setVariable(CompositionType.PARALLEL.toString(),CompositionType.PARALLEL);
+		binding.setVariable(CompositionType.SEQUENTIAL.toString(),CompositionType.SEQUENTIAL);
 
 		Number.metaClass.getH = { ->
 			new Duration(delegate, Unit.hour)
@@ -81,7 +85,7 @@ class GroovuinoMLDSL {
 		
 		binding.setScript(script)
 		script.setBinding(binding)
-		
+		SketchMapping.setBinding(binding);
 		script.run()
 	}
 

@@ -85,8 +85,6 @@ public class ToWiring extends Visitor<StringBuffer> {
 	public void visit(State state) {
 		if(state.getTransition() != null) {
 			w(String.format("void state_%s() {", state.getName()));
-			System.out.println(state.getName());
-			System.out.println(state.getActions());
 			visitActionsTransitions(state.getTransition(), state);
 			w("}\n");
 		}

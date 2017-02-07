@@ -14,7 +14,7 @@ import io.github.mosser.arduinoml.kernel.structural.*;
 
 public class GroovuinoMLModel {
 	private List<Brick> bricks;
-	private List<State> states;
+	private List<TransitionableNode> states;
 	private List<Macro> macros;
 	private List<Constrain> constrains;
 	private TransitionableNode initialState;
@@ -30,6 +30,8 @@ public class GroovuinoMLModel {
 		this.macros = new ArrayList<>();
 		this.constrains = new ArrayList<>();
 		this.binding = binding;
+		this.apps = new ArrayList<>();
+		this.stateNames = new ArrayList<>();
 		this.importApp = new App();
 	}
 	
@@ -143,12 +145,12 @@ public class GroovuinoMLModel {
 //			throw new ConstraintViolation("constrain is violated ");
 //		}
 		verifyConstraintViolation();
+		composeApp();
 		App app = new App();
 		app.setName(appName);
 		app.setBricks(this.bricks);
 		app.setStates(this.states);
 		app.setInitial(this.initialState);
-		System.out.println(app.getInitial().getName());
 		for(Macro m : macros) {
 			generateStateList(m.getBeginState(),m);
 		}
@@ -187,11 +189,7 @@ public class GroovuinoMLModel {
 		return count;
 	}
 
-	public static void main(String[] args) {
-		Brick b = new Led();
-		Brick c =  new Buzzer();
-		System.out.println(b.getClass().isInstance(c));
-	}
+
 
 	public void createBuzzer(String name, Integer pinNumber) {
 		Buzzer buzzer = new Buzzer();
@@ -205,7 +203,7 @@ public class GroovuinoMLModel {
 
 
 			this.bricks.stream().filter(aBrick -> aBrick.getPin() == pinNumber).forEach(aBrick -> {
-				//TODO  edge cases
+				//TODO  edge casest
 			});
 			this.bricks.add(brick);
 			this.binding.setVariable(name, brick);
@@ -223,14 +221,14 @@ public class GroovuinoMLModel {
 
 	}
 
-	public void addAppToConstrain(String appName) {
+	public void addAppToCompose(String appName) {
 		importApp.setName(appName);
 		importApp.setBricks(this.bricks);
 		importApp.setStates(this.states);
 		importApp.setInitial(this.initialState);
 
 		SketchMapping.getBinding().setVariable(importApp.getName(), importApp);
-		SketchMapping.getSketchConstrains().put(importApp.getName(), importApp);
+		SketchMapping.getSketchPool().put(importApp.getName(), importApp);
 
 	}
 
@@ -248,7 +246,144 @@ public class GroovuinoMLModel {
 
 	public void createSketchComposition(App[] myApps, String[] myStatesNames) {
 		this.apps.add(myApps);
+		if(myStatesNames != null)
 		this.stateNames.add(myStatesNames);
 	}
+
+	public void composeApp() throws Exception {
+
+		List<App> appList = new ArrayList<>();
+
+		for(App[] appsArray : this.apps) {
+			for(int i = 0; i < appsArray.length; i++){
+				appList.add(appsArray[i]);
+			}
+		}
+		if(this.compositionType != null) {
+			switch (compositionType) {
+				case MANUAL:
+					manualComposition(appList, this.stateNames);
+					break;
+				case SEQUENTIAL:
+					break;
+				case PARALLEL:
+					this.stateNames = matchStates(apps);
+
+					manualComposition(appList, this.stateNames);
+					break;
+				default :
+					break;
+			}
+		}
+	}
+
+	private List<String[]> matchStates(List<App[]> appList) {
+		List<String[]> statesStrings = new ArrayList<>();
+			for(TransitionableNode s : appList.get(0)[0].getStates()) {
+				String[] strArray = new String[appList.size()];
+				Arrays.fill(strArray, s.getName());
+				statesStrings.add(strArray);
+			}
+
+	return statesStrings;
+
+	}
+
+
+	private void manualComposition(List<App> apps, List<String[]> statesNamesList) {
+		this.initialState = apps.get(0).getInitial().copy();
+		List<Brick> myBricks = new ArrayList<>();
+
+		List<TransitionableNode> myStates = new ArrayList<>();
+		List<TransitionableNode> transitionablesComp = new ArrayList<>();
+
+		for(App app : apps) {
+			for(Brick brick : app.getBricks()) {
+				if(!myBricks.contains(brick))
+					myBricks.add(brick);
+			}
+		}
+
+		this.bricks = myBricks;
+		for (String[] statesNames : statesNamesList) {
+			List<TransitionableNode> stateToCompose = new ArrayList<>();
+			for (int i = 0; i < statesNames.length; i++) {
+				App app = apps.get(i);
+				int statePositionInList = checkExistingState(app, statesNames[i]);
+				if (statePositionInList != -1) {
+					TransitionableNode transitionable = app.getStates().get(statePositionInList);
+					stateToCompose.add(transitionable);
+				}
+			}
+
+			TransitionableNode myState = stateToCompose.get(0);
+
+			boolean composed = true;
+
+			for(int i = 1; i < stateToCompose.size(); i++) {
+				if(!(stateToCompose.get(i).getTransition().getNext().equals(myState.getTransition().getNext()))) {
+					composed = false;
+				}
+			}
+
+			State composedState = new State();
+			composedState.setActions(new ArrayList<>());
+			composedState.setName("merged_state");
+			composedState.setTransition(null);
+
+			for (TransitionableNode state : stateToCompose) {
+				composedState.setName(composedState.getName() + "_" + state.getName());
+				List<Action> actions = ((State) state).getActions();
+				for (Action action : actions) {
+					composedState.getActions().add(action);
+				}
+				Transition transition = state.getTransition().copy();
+				if(composedState.getTransition() == null) {
+					composedState.setTransition(transition);
+				} else {
+					if (transition instanceof DurationTransition) {
+						// For the moment we decided that the first timer value
+					} else {
+						if(composedState.getTransition() instanceof DurationTransition) {
+							// throw exception
+						} else {
+							List<BooleanExpression> booleanExpressions = ((ConditionalTransition) composedState.getTransition()).getConditionalStatement().getBooleanExpressions();
+							booleanExpressions.addAll(((ConditionalTransition) transition).getConditionalStatement().getBooleanExpressions());
+						}
+					}
+				}
+
+			}
+			System.out.println(composedState.getName() + " " + composedState.getTransition().getNext().getName());
+			transitionablesComp.add(composedState);
+
+		}
+
+		for(int i = 0;i<transitionablesComp.size();i++) {
+			for (int j = 0; j < transitionablesComp.size(); j++) {
+				if(transitionablesComp.get(i).getName().contains(transitionablesComp.get(j).getTransition().getNext().getName())) {
+					TransitionableNode f = transitionablesComp.get(i).copy();
+					f.getTransition().getNext().setName(transitionablesComp.get(j).getName());
+					myStates.add(f);
+				}
+			}
+			if(transitionablesComp.get(i).getName().contains(initialState.getName())) {
+				initialState = transitionablesComp.get(i);
+			}
+		}
+
+		this.states = myStates;
+	}
+
+	private int checkExistingState(App app, String stateName) {
+		for (int i = 0; i < app.getStates().size(); i++) {
+			if (app.getStates().get(i).getName().equals(stateName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+
 
 }

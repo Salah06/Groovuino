@@ -15,7 +15,7 @@ public class App implements NamedElement, Visitable {
 
 	private String name;
 	private List<Brick> bricks = new ArrayList<>();
-	private List<State> states = new ArrayList<>();
+	private List<TransitionableNode> states = new ArrayList<>();
 	private List<Macro> macros = new ArrayList<>();
 	private TransitionableNode initial;
 
@@ -37,11 +37,11 @@ public class App implements NamedElement, Visitable {
 		this.bricks = bricks;
 	}
 
-	public List<State> getStates() {
+	public List<TransitionableNode> getStates() {
 		return states;
 	}
 
-	public void setStates(List<State> states) {
+	public void setStates(List<TransitionableNode> states) {
 		this.states = states;
 	}
 

@@ -93,9 +93,6 @@ abstract class GroovuinoMLBasescript extends Script {
 		println(((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().generateCode(name).toString())
 	}
 
-	def exportToConstrain(String appName) {
-		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().addAppToConstrain(appName);
-	}
 
 //	def constrainTo(Function fun, Integer nb, NamedActuator actuator) {
 //		String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
@@ -123,22 +120,35 @@ abstract class GroovuinoMLBasescript extends Script {
 		}]
 	}
 
-	def compose() {
+
+
+	def sketch(String name) {
 		def closure
-		[sketches: { ... appList ->
-			[usingStrategy: closure = { CompositionType compositionType ->
-				if (compositionType.equals(CompositionType.MANUAL)) {
+		[isComposedBy: { ... appList ->
+			[withStrategy: closure = { CompositionType compositionStrategy ->
+				if (compositionStrategy.equals(CompositionType.MANUAL)) {
 					[mergingState: { ... stateList ->
-						((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createComposition(compositionType)
+						((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createComposition(compositionStrategy)
 						((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSketchComposition((App[]) appList,(String[]) stateList)
 						[and: closure]
 					}]
+				}
+				else {
+					((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createComposition(compositionStrategy)
+					((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createSketchComposition((App[]) appList,null)
 				}
 			}]
 		}]
 
 	}
 
+
+
+
+
+	def exportToCompose(String name) {
+		((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addAppToCompose(name)
+	}
 
 
 

@@ -11,19 +11,18 @@ import java.util.Map;
  */
 public class SketchMapping {
 
-    private static Map<String, App> sketchConstrains = new HashMap<>();
+    private static HashMap<String, App> sketchPool = new HashMap<>();
     private static GroovuinoMLBinding binding;
 
     public static void setBinding(GroovuinoMLBinding groovuinoMLBinding) {
         binding = groovuinoMLBinding;
     }
 
-
-    public static Map<String, App> getSketchConstrains() {
-        return sketchConstrains;
-    }
-
     public static GroovuinoMLBinding getBinding() {
         return binding;
+    }
+
+    public static HashMap<String, App> getSketchPool() {
+        return sketchPool;
     }
 }
