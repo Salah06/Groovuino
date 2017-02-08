@@ -7,6 +7,7 @@ import groovuinoml.dsl.mapping.SketchMapping;
 import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.Exception.ConstraintViolation;
+import io.github.mosser.arduinoml.kernel.Exception.OverloadedShield;
 import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
@@ -66,16 +67,6 @@ public class GroovuinoMLModel {
 		this.states.add(state);
 		this.binding.setVariable(name, state);
 	}
-	
-//	public void createConditianalTransition(State from, State to, List<Sensor> sensors, List<SIGNAL> values,List<BooleanExpression> booleanExpressions) {
-//		ConditionalStatement cndStmnt = new ConditionalStatement();
-//		cndStmnt.setBooleanExpressions(booleanExpressions);
-//		cndStmnt.setValue(values);
-//		cndStmnt.setSensor(sensors);
-//		ConditionalTransition conditionalTransition = new ConditionalTransition(cndStmnt);
-//		conditionalTransition.setNext(to);
-//		from.setTransition(conditionalTransition);
-//	}
 
 
 
@@ -94,10 +85,6 @@ public class GroovuinoMLModel {
 
 
     public void createDurationTransition (TransitionableNode from, TransitionableNode to, Duration duration) {
-		if (from.getTransition() != null) {
-		//	throw new TooManyTransitionsException("You can't set two outgoing transitions for one state !" +
-		//			"\n (from "+ from.getName()+" to " +from.getTransition().getNext().getName()+" and to "+to.getName()+"). \n" );
-		}
 		DurationTransition timerTransition = new DurationTransition();
 		timerTransition.setNext(to);
 		timerTransition.setDuration(duration);
@@ -169,24 +156,6 @@ public class GroovuinoMLModel {
 	}
 
 
-	private void generateStateList(TransitionableNode state, Macro macro) {
-		State myState = (State) state.copy();
-
-		String stateName = String.format("%s", state.getName());
-		myState.setName(stateName);
-		if (state.getName().equals(macro.getEndState().getName())) {
-			myState.setTransition(macro.getTransition());
-			macro.getStateList().add(myState);
-		} else {
-			State next = (State) myState.getTransition().getNext().copy();
-
-			String nextStateName = String.format("%s", state.getTransition().getNext().getName());
-			next.setName(nextStateName);
-			myState.getTransition().setNext(next);
-			macro.getStateList().add(myState);
-			generateStateList(state.getTransition().getNext(), macro);
-		}
-	}
 
 
 	@SuppressWarnings("rawtypes")
@@ -202,10 +171,6 @@ public class GroovuinoMLModel {
 		app.setBricks(this.bricks);
 		app.setStates(this.states);
 		app.setInitial(this.initialState);
-		/*
-		for(Macro m : macros) {
-			generateStateList(m.getBeginState(),m);
-		}*/
 		app.setMacros(this.macros);
 		Visitor codeGenerator = new ToWiring();
 		app.accept(codeGenerator);
@@ -342,7 +307,7 @@ public class GroovuinoMLModel {
 	}
 
 
-	private void manualComposition(List<App> apps, List<String[]> statesNamesList) {
+	private void manualComposition(List<App> apps, List<String[]> statesNamesList) throws OverloadedShield {
 		this.initialState = apps.get(0).getInitial().copy();
 		List<Brick> myBricks = new ArrayList<>();
 
@@ -357,6 +322,12 @@ public class GroovuinoMLModel {
 		}
 
 		this.bricks = myBricks;
+
+		if(bricks.size() >  5) {
+			throw new OverloadedShield("overloaded shield excpected max 5 and found : " + bricks.size());
+		}
+
+
 		for (String[] statesNames : statesNamesList) {
 			List<TransitionableNode> stateToCompose = new ArrayList<>();
 			for (int i = 0; i < statesNames.length; i++) {
@@ -368,15 +339,8 @@ public class GroovuinoMLModel {
 				}
 			}
 
-			TransitionableNode myState = stateToCompose.get(0);
 
-			boolean composed = true;
 
-			for(int i = 1; i < stateToCompose.size(); i++) {
-				if(!(stateToCompose.get(i).getTransition().getNext().equals(myState.getTransition().getNext()))) {
-					composed = false;
-				}
-			}
 
 			State composedState = new State();
 			composedState.setActions(new ArrayList<>());

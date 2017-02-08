@@ -12,7 +12,7 @@ state "off" means ld1 becomes low and ld2 becomes low
 
 
 
-defineMacro "blink" using "state1" to "state2" when bt becomes high and "state2" to "state1" when bt becomes low
+defineMacro "blink" using "state1" to "state2" when bt becomes high and "state2" to "state1" when bt becomes high
 
 applyMacro blink using ld1on and ld1off
 

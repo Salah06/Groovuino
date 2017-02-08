@@ -1,5 +1,5 @@
 sensor "bt" pin 9
-led "ld" pin 11
+buzzer "ld" pin 11
 
 state "on" means ld becomes high
 state "off" means ld becomes low
