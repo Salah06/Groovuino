@@ -18,7 +18,7 @@ public class GroovuinoML {
 		if(args.length > 0) {
 			dsl.eval(new File(args[0]));
 		} else {
-			dsl.eval(new File("./scripts/Macro.groovy"));
+			dsl.eval(new File("./scripts/Ergonomic.groovy"));
 		}
 	}
 }
