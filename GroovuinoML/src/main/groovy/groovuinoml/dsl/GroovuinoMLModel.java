@@ -129,20 +129,11 @@ public class GroovuinoMLModel {
 			}
 			macro.getStateList().add(from);
 		}
-		System.out.println(macro.getStateList().size());
 
 	}
 
 	public void createAppliedMacro(Macro macro) {
-		System.out.println("applied param " + macro);
 		Macro m = (Macro) macro.copy();
-		System.out.println("copied macro " + m);
-		System.out.println("initial : " +  m.getStateList().get(0).getName());
-		System.out.println("intial next : " + m.getStateList().get(0).getTransition().getNext().getName());
-		System.out.println("the next on list :" + m.getStateList().get(1).getName());
-		System.out.println("the next on list : " + m.getStateList().get(1).getTransition().getNext().getName());
-		m.getStateList().get(1).getTransition().getNext().setName("totoototo");
-		System.out.println(m.getStateList().get(0).getName());
 		macros.add(m);
 	}
 
@@ -150,7 +141,6 @@ public class GroovuinoMLModel {
 
 	public State appendToMacro(Macro macro,int index,State state,State prev) {
 		Macro m = macros.get(macros.size()-1);
-		System.out.println("appendtomacro " + m);
 		Transition templateTransition = macro.getStateList().get(index).getTransition().copy();
 		state.setTransition(templateTransition.copy());
 		state.getTransition().setNext(prev);
@@ -416,7 +406,6 @@ public class GroovuinoMLModel {
 				}
 
 			}
-			System.out.println(composedState.getName() + " " + composedState.getTransition().getNext().getName());
 			transitionablesComp.add(composedState);
 
 		}
