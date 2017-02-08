@@ -102,13 +102,62 @@ abstract class GroovuinoMLBasescript extends Script {
 //	}
 
 	//	defineMacro "ld1Blink" from ld1on to ld1off
+	//defineMacro "blink" using "state1" to "state2" when bt becomes high and "state2" to "state1" when bt becomes low
 	def defineMacro(String name) {
-		[from: { State beginState ->
-			[to: { State endState ->
-				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createMacro(name, beginState, endState)
+
+		((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().createMacro(name)
+
+		def closure
+			[using: closure = { state1 ->
+
+					[to: { state2 ->
+
+						[when: { transitionBegin ->
+							if (transitionBegin instanceof Sensor) {
+
+								[becomes: { signal, bool = BooleanExpression.AND ->
+									List<Sensor> sensors = new ArrayList<>()
+									List<SIGNAL> signals = new ArrayList<>()
+									List<BooleanExpression> booleanExpressions = new ArrayList<>()
+									sensors.add(transitionBegin)
+									signals.add(signal)
+									booleanExpressions.add(bool)
+									((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().defineMacro(name,new State(state1), new State(state2), booleanExpressions, sensors, signals)
+
+									[and: closure]
+								}]
+							} else if(transitionBegin instanceof Duration) {
+								((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().defineMacro(name,new State(state1), new State(state2), transitionBegin)
+							}
+						}]
+
+					}]
+
 			}]
+
+
+
+	}
+
+	//applyMacro blink using(state1,ld1) and using(state2,ld2)
+
+	def applyMacro(Macro macro) {
+		int i = 0;
+		State prev = new State();
+		((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createAppliedMacro(macro);
+		def closure
+		[using: closure = { stateValue ->
+			println "counter : " + i;
+			if (i > macro.getStateList().size()) {
+				//throw
+			}
+			prev = ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().appendToMacro(macro,i,stateValue,prev);
+			i++;
+			[and: closure]
 		}]
 	}
+
+
 
 //	constraint led to max nana 33
 	def constraint(NamedActuator actuator) {

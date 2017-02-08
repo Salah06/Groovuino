@@ -7,7 +7,8 @@ public enum NamedActuator {
 
     LED("led"),
     BUZZER("buzzer"),
-    Sensor("sensor");
+    Sensor("sensor"),
+    BUTTON("button");
 
     private String name;
 

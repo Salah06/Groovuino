@@ -14,6 +14,14 @@ public class State extends TransitionableNode {
 		return actions;
 	}
 
+
+	public State() {
+	}
+
+	public State(String name) {
+		super(name, null);
+	}
+
 	public void setActions(List<Action> actions) {
 		this.actions = actions;
 	}

@@ -16,6 +16,7 @@ public class GroovuinoMLModel {
 	private List<Brick> bricks;
 	private List<TransitionableNode> states;
 	private List<Macro> macros;
+	private Map<String,Macro> templates;
 	private List<Constrain> constrains;
 	private TransitionableNode initialState;
 	private CompositionType compositionType;
@@ -33,6 +34,7 @@ public class GroovuinoMLModel {
 		this.apps = new ArrayList<>();
 		this.stateNames = new ArrayList<>();
 		this.importApp = new App();
+		this.templates = new HashMap<>();
 	}
 	
 	public void createSensor(String name, Integer pinNumber) {
@@ -104,13 +106,62 @@ public class GroovuinoMLModel {
 	}
 
 
-	public void createMacro(String macroName, State beginState, State endState) {
+	public void createMacro(String macroName) {
 		Macro macro = new Macro();
-		macro.setBeginState(beginState);
-		macro.setEndState(endState);
-		macro.setName(macroName);
-		macros.add(macro);
+		templates.put(macroName,macro);
 		this.binding.setVariable(macroName, macro);
+	}
+
+	public void defineMacro(String name,State from, State to, List<BooleanExpression> booleanExpressions,List<Sensor> sensors,List<SIGNAL> signals) {
+		Macro macro = templates.get(name);
+		if(macro != null) {
+			ConditionalStatement conditionalStatement = new ConditionalStatement(sensors,signals,booleanExpressions);
+			ConditionalTransition transition = new ConditionalTransition();
+			transition.setNext(to);
+			transition.setConditionalStatement(conditionalStatement);
+			from.setTransition(transition);
+			for(State state : macro.getStateList()) {
+				for(State stateToNext : macro.getStateList()) {
+					if(state.getName().equals(stateToNext.getTransition().getNext().getName())) {
+						state.getTransition().setNext(stateToNext);
+					}
+				}
+			}
+			macro.getStateList().add(from);
+		}
+
+	}
+
+	public void createAppliedMacro(Macro macro) {
+		Macro m = (Macro) macro.copy();
+		macros.add(m);
+	}
+
+
+
+	public State appendToMacro(Macro macro,int index,State state,State prev) {
+		Macro m = macros.get(macros.size()-1);
+		Transition templateTransition = macro.getStateList().get(index).getTransition().copy();
+		state.setTransition(templateTransition.copy());
+		state.getTransition().setNext(prev);
+		m.getStateList().remove(index);
+		m.getStateList().add(index,state);
+		if(index != 0) {
+			m.getStateList().get(index-1).getTransition().setNext(state);
+		}
+		return state;
+	}
+
+
+	public void defineMacro(String name, State from,State to,Duration duration) {
+		Macro macro = templates.get(name);
+		if(macro != null) {
+			DurationTransition durationTransition = new DurationTransition();
+			durationTransition.setDuration(duration);
+			durationTransition.setNext(to);
+			from.setTransition(durationTransition);
+			macro.getStateList().add(from);
+		}
 	}
 	
 	public void setInitialState(TransitionableNode state) {
@@ -151,9 +202,10 @@ public class GroovuinoMLModel {
 		app.setBricks(this.bricks);
 		app.setStates(this.states);
 		app.setInitial(this.initialState);
+		/*
 		for(Macro m : macros) {
 			generateStateList(m.getBeginState(),m);
-		}
+		}*/
 		app.setMacros(this.macros);
 		Visitor codeGenerator = new ToWiring();
 		app.accept(codeGenerator);
@@ -352,7 +404,6 @@ public class GroovuinoMLModel {
 				}
 
 			}
-			System.out.println(composedState.getName() + " " + composedState.getTransition().getNext().getName());
 			transitionablesComp.add(composedState);
 
 		}
