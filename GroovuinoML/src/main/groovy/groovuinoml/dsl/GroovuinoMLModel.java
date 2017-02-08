@@ -180,7 +180,7 @@ public class GroovuinoMLModel {
 
 	private void verifyConstraintViolation() throws ConstraintViolation {
 		for(Constrain constrain : constrains) {
-			int count = countActuator(constrain.getActuator());
+			int count = countActuator(constrain.getBrick());
 			if(constrain.getFunction().equals(Function.MAX)) {
 					if(count > constrain.getAmount()) {
 						throw new ConstraintViolation("[Constraint : "+ constrain.toString()+" ]" + " found : " + count );
@@ -197,13 +197,11 @@ public class GroovuinoMLModel {
 
 
 
-	private int countActuator(Actuator actuator) {
-		int count ;
+	private int countActuator(Brick b) {
 
-	     count =  (int) bricks.stream()
-				            .filter(brick -> brick.getClass().isInstance(actuator))
+	     return   (int) bricks.stream()
+				 			.filter(brick -> brick.getClass().isInstance(b))
 				 		    .count();
-		return count;
 	}
 
 
@@ -232,8 +230,8 @@ public class GroovuinoMLModel {
 
 	}
 
-	public void constrain(Integer nb, Function unaryFunc, Actuator actuator) {
-		Constrain constrain = new Constrain(nb,unaryFunc,actuator);
+	public void constrain(Integer nb, Function unaryFunc, Brick brick) {
+		Constrain constrain = new Constrain(nb,unaryFunc,brick);
 		constrains.add(constrain);
 
 	}

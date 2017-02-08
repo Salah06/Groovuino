@@ -3,6 +3,7 @@ package groovuinoml.dsl
 import io.github.mosser.arduinoml.kernel.App
 import io.github.mosser.arduinoml.kernel.behavioral.*
 import io.github.mosser.arduinoml.kernel.structural.Actuator
+import io.github.mosser.arduinoml.kernel.structural.Brick
 import io.github.mosser.arduinoml.kernel.structural.NamedActuator
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
 import io.github.mosser.arduinoml.kernel.structural.Sensor
@@ -163,7 +164,7 @@ abstract class GroovuinoMLBasescript extends Script {
 		[to: { Function fun ->
 			[with: { int howMany ->
 				String className = "io.github.mosser.arduinoml.kernel.structural." + actuator.getName().substring(0, 1).toUpperCase() + actuator.getName().substring(1);
-				Actuator ac = Class.forName(className).newInstance()
+				Brick ac = Class.forName(className).newInstance()
 				ac.setName(actuator.getName())
 				((GroovuinoMLBinding)this.getBinding()).getGroovuinoMLModel().constrain(howMany,fun,ac);}]
 		}]

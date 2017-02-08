@@ -1,6 +1,7 @@
 package io.github.mosser.arduinoml.kernel.behavioral;
 
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
+import io.github.mosser.arduinoml.kernel.structural.Brick;
 
 /**
  * Created by ytijani on 30/01/2017.
@@ -8,14 +9,14 @@ import io.github.mosser.arduinoml.kernel.structural.Actuator;
 public class Constrain {
 
     private int amount;
-    private Actuator actuator;
+    private Brick brick;
     private Function function;
 
 
-    public Constrain(int amount, Function function, Actuator actuator) {
+    public Constrain(int amount, Function function, Brick brick) {
         this.amount = amount;
         this.function = function;
-        this.actuator = actuator;
+        this.brick = brick;
     }
 
     public int getAmount() {
@@ -26,17 +27,20 @@ public class Constrain {
         this.amount = amount;
     }
 
+    public Brick getBrick() {
+        return brick;
+    }
+
+    public void setBrick(Brick brick) {
+        this.brick = brick;
+    }
+
     public Function getFunction() {
         return function;
     }
 
-    public Actuator getActuator() {
-        return actuator;
-    }
-
-
-    public void setActuator(Actuator actuator) {
-        this.actuator = actuator;
+    public void setActuator(Brick brick) {
+        this.brick = brick;
     }
 
     public void setFunction(Function function) {
@@ -46,7 +50,7 @@ public class Constrain {
     @Override
 
     public String toString() {
-        return "constraint " + actuator.getName()+ " to " + getFunction().toString() + " with " + getAmount();
+        return "constraint " + brick.getName()+ " to " + getFunction().toString() + " with " + getAmount();
     }
 
 //    constraint led to max nana 2
